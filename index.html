@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <style>
+        table, th, td {
+            border:1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="profile-data-table">
+        <tr>
+            <td>Name</td>
+            <td>Picture</td>
+            <td>Favorite Word 1</td>
+            <td>Favorite Word 2</td>
+            <td>Favorite Word 3</td>
+        </tr>
+    </table>
+
+    <script type="module">
+
+        // Initialize Firebase.
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7wNpo9TWgk-EP5TRAgm2cWkUE1UJMX5k",
+            authDomain: "profileapp-a7d04.firebaseapp.com",
+            databaseURL: "https://profileapp-a7d04-default-rtdb.firebaseio.com",
+            projectId: "profileapp-a7d04",
+            storageBucket: "profileapp-a7d04.appspot.com",
+            messagingSenderId: "798394075663",
+            appId: "1:798394075663:web:0f464dcedc84b56036717a",
+            measurementId: "G-TRXL085K7Y"
+        };
+        const app = initializeApp(firebaseConfig);
+
+        // Get the data from Firebase.
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"
+        const db = getDatabase();
+        const dbRoot = ref(db);
+        const dbRootQuery = get(dbRoot)
+        .then((snapshot) => {
+            const data = snapshot.val();
+            const userIds = Object.keys(data);
+            const table = document.getElementById("profile-data-table");
+            userIds.forEach((userId) => {
+                const tableRowElem = document.createElement("tr");
+                const tableData = [
+                    [document.createElement("td"), data[userId].name],
+                    [document.createElement("td"), data[userId].image],
+                    [document.createElement("td"), data[userId].favword1],
+                    [document.createElement("td"), data[userId].favword2],
+                    [document.createElement("td"), data[userId].favword3],
+                ];
+                tableData.forEach((tableDatum) => {
+                    const tableDatumElem = tableDatum[0];
+                    const tableDatumVal = tableDatum[1];
+                    tableDatumElem.textContent = tableDatumVal;
+                    tableRowElem.appendChild(tableDatumElem);
+                });
+                const imageTableData = tableRowElem.children[1];
+                const imageElem = document.createElement("img");
+                imageElem.src = imageTableData.textContent;
+                imageTableData.textContent = "";
+                imageTableData.appendChild(imageElem);
+                table.appendChild(tableRowElem);
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    </script>
+</body>
+
+</html>
